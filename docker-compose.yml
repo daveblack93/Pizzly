@@ -1,6 +1,48 @@
-version: '3'
-services:
+version: "3.6"
+
+networks:
   database:
-    image: postgres
+    driver: ${NETWORKS_DRIVER}
+
+volumes:
+  postgres:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+  ### Pizzly - OAuth service ####################################
+  oauth:
+    build:
+      context: ./pizzly
     ports:
-      - '5432:5432'
+      - 8080:8080
+    networks:
+      - database
+      - default
+    environment:
+      NODE_ENV: production
+      DASHBOARD_USERNAME: admin
+      DASHBOARD_PASSWORD: admin
+      SECRET_KEY: devSecretKey
+      PUBLISHABLE_KEY: devPubKey
+      PROXY_USES_SECRET_KEY_ONLY: "FALSE"
+      COOKIE_SECRET: devCookieSecret
+      AUTH_CALLBACK_URL: https://localhost/auth/callback
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: oauth_db
+      DB_USER: root
+      DB_PASSWORD: root
+
+  ### Postgres Database #########################################
+  postgres:
+    image: postgres:12
+    ports:
+      - 5432:5432
+    networks:
+      - database
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: oauth_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
