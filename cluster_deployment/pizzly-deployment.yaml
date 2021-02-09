@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: fg-tenant1-pizzly
+  name: fg-tenant1-pizzly-widget
+  labels:
+    app: fg-tenant1-pizzly-widget
+    product: fg-tenant1-pizzly
+    app.kubernetes.io/name: "fg-tenant1-pizzly-widget"
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: "davide"
+    app.kubernetes.io/component: "fg-tenant1-pizzly-widget"
+    app.kubernetes.io/part-of: "fg-tenant1-pizzly"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fg-tenant1-pizzly-widget
+  template:
+    metadata:
+      labels:
+        app: fg-tenant1-pizzly-widget
+    spec:
+      containers:
+        - name: fg-tenant1-pizzly-widget
+          image: davidep931/pizzly-proxy:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DASHBOARD_USERNAME
+              value: "admin"
+            - name: DASHBOARD_PASSWORD
+              value: "admin"
+            - name: SECRET_KEY
+              value: "devSecretKey"
+            - name: PUBLISHABLE_KEY
+              value: "devPubKey"
+            - name: PROXY_USES_SECRET_KEY_ONLY
+              value: "FALSE"
+            - name: COOKIE_SECRET
+              value: "devCookieSecret"
+            - name: AUTH_CALLBACK_URL
+              value: "https://pizzly.fg-tenant1-npd.deltatre.digital/auth/callback"
+            - name: DB_HOST
+              value: "10.0.110.94"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: "postgresdb"
+            - name: DB_USER
+              value: "postgresadmin"
+            - name: DB_PASSWORD
+              value: "admin123"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fg-tenant1-pizzly
+  name: fg-tenant1-pizzly-widget
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: fg-tenant1-pizzly-widget

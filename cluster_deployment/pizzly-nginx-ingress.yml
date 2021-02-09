@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: fg-tenant1-pizzly
+  name: fg-tenant1-pizzly-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  labels:
+    product: fg-tenant1-pizzly
+    app.kubernetes.io/name: "fg-tenant1-pizzly-nginx-ingress"
+    app.kubernetes.io/component: "ingress"
+    app.kubernetes.io/part-of: "fg-tenant1-pizzly"
+spec:
+  tls:
+    - hosts:
+        - pizzly.fg-tenant1-npd.deltatre.digital
+      secretName: letsencrypt-certs
+  rules:
+    - host: pizzly.fg-tenant1-npd.deltatre.digital
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: fg-tenant1-pizzly-widget
+              servicePort: 8080
