@@ -431,6 +431,21 @@ api.get('/:integrationId/configurations/:configurationId', async (req, res, next
 })
 
 /**
+ * Retrieve an auth-id token
+ */
+
+api.get('/:integrationId/authentication/:setupId', async (req, res) => {
+  const buid = String(req.params.integrationId)
+  const setupId = String(req.params.setupId)
+  const authentication = await store('authentications')
+    .select('auth_id', 'setup_id', 'created_at', 'updated_at')
+    .where({ buid: buid, setup_id: setupId })
+    .first()
+
+  res.json(authentication)
+})
+
+/**
  * Delete a configuration
  */
 
