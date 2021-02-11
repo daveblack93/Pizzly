@@ -22,6 +22,10 @@ namespace PizzlyConnector.Services
             {
                 throw new ArgumentNullException($"{nameof(baseUrl)} cannot be null");
             }
+            if (string.IsNullOrWhiteSpace(integrationId))
+            {
+                throw new ArgumentNullException($"{nameof(integrationId)} cannot be null");
+            }
 
             _baseUrl = baseUrl;
             _integrationId = integrationId;
