@@ -9,9 +9,9 @@ namespace ConsoleApp.Connect
     {
         public static async Task Main(string[] args)
         {
-            var pizzly = new Pizzly("http://localhost:8080", "github");
-            await pizzly.SetAuthenticationAsync("5b41eb73-5dce-493a-8bfc-1ebc020d740a").ConfigureAwait(false);
+            var pizzly = new Pizzly("http://localhost:8080", "github", "41c90e80-6c49-11eb-8076-1f9efd8bea5b");
 
+            // await pizzly.SetAuthenticationAsync("5b41eb73-5dce-493a-8bfc-1ebc020d740a").ConfigureAwait(false);
             //var setUp = new ConfigurationSetup()
             //{
             //    ClientId = "505dee414c575e811c09",

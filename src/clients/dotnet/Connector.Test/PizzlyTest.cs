@@ -14,8 +14,9 @@ namespace Connector.Test
         {
             var host = "http://localhost:8080";
             var integrationId = "Github";
+            var authId = Guid.NewGuid().ToString();
 
-            _pizzly = new Pizzly(host, integrationId);
+            _pizzly = new Pizzly(host, integrationId, authId);
         }
 
         [Test]

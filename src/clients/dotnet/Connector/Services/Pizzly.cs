@@ -16,7 +16,7 @@ namespace PizzlyConnector.Services
         private string _integrationId { get; set; }
         private string _authId { get; set; }
 
-        public Pizzly(string baseUrl, string integrationId)
+        public Pizzly(string baseUrl, string integrationId, string authenticationId)
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
@@ -29,6 +29,7 @@ namespace PizzlyConnector.Services
 
             _baseUrl = baseUrl;
             _integrationId = integrationId;
+            _authId = authenticationId;
         }
 
         public async Task<ConfigurationResponse> CreateConfiguration(ConfigurationSetup setup)
