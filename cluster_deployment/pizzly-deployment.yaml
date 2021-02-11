@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: fg-tenant1-pizzly
-  name: fg-tenant1-pizzly-widget
+  namespace: products-pizzly
+  name: products-pizzly-widget
   labels:
-    app: fg-tenant1-pizzly-widget
-    product: fg-tenant1-pizzly
-    app.kubernetes.io/name: "fg-tenant1-pizzly-widget"
+    app: products-pizzly-widget
+    product: products-pizzly
+    app.kubernetes.io/name: "products-pizzly-widget"
     app.kubernetes.io/version: "latest"
     app.kubernetes.io/managed-by: "davide"
-    app.kubernetes.io/component: "fg-tenant1-pizzly-widget"
-    app.kubernetes.io/part-of: "fg-tenant1-pizzly"
+    app.kubernetes.io/component: "products-pizzly-widget"
+    app.kubernetes.io/part-of: "products-pizzly"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fg-tenant1-pizzly-widget
+      app: products-pizzly-widget
   template:
     metadata:
       labels:
-        app: fg-tenant1-pizzly-widget
+        app: products-pizzly-widget
     spec:
       containers:
-        - name: fg-tenant1-pizzly-widget
+        - name: products-pizzly-widget
           image: davidep931/pizzly-proxy:latest
           ports:
             - containerPort: 8080
@@ -42,7 +42,7 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.fg-tenant1-npd.deltatre.digital/auth/callback"
+              value: "https://pizzly.products.deltatre.digital/auth/callback"
             - name: DB_HOST
               value: "10.0.110.94"
             - name: DB_PORT
@@ -53,15 +53,22 @@ spec:
               value: "postgresadmin"
             - name: DB_PASSWORD
               value: "admin123"
+          volumeMounts:
+            - mountPath: /var/lib/pizzly/data
+              name: pizzlystorage
+      volumes:
+        - name: pizzlystorage
+          persistentVolumeClaim:
+            claimName: products-pizzly-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: fg-tenant1-pizzly
-  name: fg-tenant1-pizzly-widget
+  namespace: products-pizzly
+  name: products-pizzly-widget
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: fg-tenant1-pizzly-widget
+    app: products-pizzly-widget
