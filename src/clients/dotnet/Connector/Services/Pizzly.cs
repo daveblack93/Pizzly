@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using Connector.Contracts;
-using Connector.Entities;
 using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json.Linq;
+using PizzlyConnector.Contracts;
+using PizzlyConnector.Entities;
 
-namespace Connector.Services
+namespace PizzlyConnector.Services
 {
     public class Pizzly : IPizzly
     {
         private string _baseUrl { get; set; }
         private string _integrationId { get; set; }
+        private string _authId { get; set; }
 
         public Pizzly(string baseUrl, string integrationId)
         {
@@ -26,60 +27,107 @@ namespace Connector.Services
             _integrationId = integrationId;
         }
 
-        public async Task<IFlurlResponse> CreateConfiguration(ConfigurationSetup setup)
+        public async Task<ConfigurationResponse> CreateConfiguration(ConfigurationSetup setup)
         {
-            var url = $"dashboard/{_integrationId}/configurations/new";
-            return await TriggerCreateOrUpdate(url, setup).ConfigureAwait(false);
+            if (setup == null)
+            {
+                throw new ArgumentNullException($"{nameof(ConfigurationSetup)} must me not null");
+            }
+
+            var url = $"api/{_integrationId}/configurations";
+            return await TriggerCreateOrUpdateConfiguration(url, setup, true).ConfigureAwait(false);
         }
 
-        public async Task<IFlurlResponse> UpdateConfiguration(string setupId, ConfigurationSetup setup)
+        public async Task<ConfigurationResponse> UpdateConfiguration(string setupId, ConfigurationSetup setup)
         {
-            var url = $"dashboard/{_integrationId}/configurations/{setupId}";
-            return await TriggerCreateOrUpdate(url, setup).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(setupId))
+            {
+                throw new ArgumentNullException($"{nameof(setupId)} must be not null or empty");
+            }
+            if (setup == null)
+            {
+                throw new ArgumentNullException($"{nameof(ConfigurationSetup)} must me not null");
+            }
+
+            var url = $"api/{_integrationId}/configurations/{setupId}";
+            return await TriggerCreateOrUpdateConfiguration(url, setup, false).ConfigureAwait(false);
         }
 
         public async Task<IFlurlResponse> DeleteConfiguration(string setupId)
         {
-            var url = $"dashboard/{_integrationId}/configurations/{setupId}";
+            if (string.IsNullOrWhiteSpace(setupId))
+            {
+                throw new ArgumentNullException($"{nameof(setupId)} must be not null or empty");
+            }
+
+            var url = $"api/{_integrationId}/configurations/{setupId}";
             return await TriggerDelete(url).ConfigureAwait(false);
         }
 
         public async Task<string> GetAuthenticationAsync(string setupId)
         {
+            if (string.IsNullOrWhiteSpace(setupId))
+            {
+                throw new ArgumentNullException($"{nameof(setupId)} must be not null or empty");
+            }
+
             var url = $"api/{_integrationId}/authentication/{setupId}";
             var authentication = await GetDatasAsync<Authentication>(url).ConfigureAwait(false);
             return authentication.Auth_Id;
         }
 
-        public async Task<JObject> GetDatasAsync(string endpoint, string authId)
+        public async Task SetAuthenticationAsync(string setupId)
         {
+            _authId = await GetAuthenticationAsync(setupId).ConfigureAwait(false);
+        }
+
+        public async Task<JObject> GetDatasAsync(string endpoint)
+        {
+            if (string.IsNullOrWhiteSpace(_authId))
+            {
+                throw new ArgumentNullException("You have to set the authid first");
+            }
+            if (string.IsNullOrWhiteSpace(endpoint))
+            {
+                throw new ArgumentNullException($"{nameof(endpoint)} must be not null or empty");
+            }
+
             var url = $"proxy/{_integrationId}/{endpoint}";
-            return await GetAuthenticatedDatasAsync<JObject>(url, authId).ConfigureAwait(false);
+            return await GetAuthenticatedDatasAsync<JObject>(url, _authId).ConfigureAwait(false);
         }
 
         #region Private Methods
 
-        private string GetScopeListFormattedForRequest(IList<string> scopes)
+        private string[] GetScopeListFormattedForRequest(IList<string> scopes)
         {
-            var scopeListFormatted = new StringBuilder();
-
-            foreach (var scope in scopes)
-            {
-                scopeListFormatted.AppendLine(scope);
-            }
-
-            return scopeListFormatted.ToString();
+            return scopes.ToArray();
         }
 
-        private async Task<IFlurlResponse> TriggerCreateOrUpdate(string url, ConfigurationSetup setup)
+        private async Task<ConfigurationResponse> TriggerCreateOrUpdateConfiguration(string url, ConfigurationSetup setup, bool isCreate)
         {
-            var result = await _baseUrl.AppendPathSegment(url)
-                .PostJsonAsync(new
+            object body = new
+            {
+                credentials = new
                 {
-                    setupKey = setup.Key,
-                    setupSecret = setup.Secret,
-                    scopes = GetScopeListFormattedForRequest(setup.Scopes)
-                }).ConfigureAwait(false);
+                    clientId = setup.ClientId,
+                    clientSecret = setup.ClientSecret
+                },
+                scopes = GetScopeListFormattedForRequest(setup.Scopes)
+            };
+
+            ConfigurationResponse result;
+            if (isCreate)
+            {
+                result = await _baseUrl.AppendPathSegment(url)
+                    .PostJsonAsync(body)
+                    .ReceiveJson<ConfigurationResponse>().ConfigureAwait(false);
+            }
+            else
+            {
+                result = await _baseUrl.AppendPathSegment(url)
+                   .PutJsonAsync(body)
+                   .ReceiveJson<ConfigurationResponse>().ConfigureAwait(false);
+            }
 
             return result;
         }

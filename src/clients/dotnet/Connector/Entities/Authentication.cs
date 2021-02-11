@@ -1,4 +1,4 @@
-﻿namespace Connector.Entities
+﻿namespace PizzlyConnector.Entities
 {
     public class Authentication
     {

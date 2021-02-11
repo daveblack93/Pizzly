@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Connector.Entities
+namespace PizzlyConnector.Entities
 {
-    public class ConfigurationSetup
+    public class ConfigurationSetup : Credential
     {
-        public string Key { get; set; }
-        public string Secret { get; set; }
         public IList<string> Scopes { get; set; }
     }
 }

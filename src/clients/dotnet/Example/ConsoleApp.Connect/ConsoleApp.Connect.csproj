@@ -6,6 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Connector\Connector.csproj" />
+    <ProjectReference Include="..\..\Connector\PizzlyConnector.csproj" />
   </ItemGroup>
 </Project>
