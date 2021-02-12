@@ -25,7 +25,7 @@ spec:
         - name: products-pizzly-widget
           image: davidep931/pizzly-proxy:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           env:
             - name: NODE_ENV
               value: "production"
@@ -44,7 +44,7 @@ spec:
             - name: AUTH_CALLBACK_URL
               value: "https://pizzly.products.deltatre.digital/auth/callback"
             - name: DB_HOST
-              value: "10.0.110.94"
+              value: "10.0.221.130"
             - name: DB_PORT
               value: "5432"
             - name: DB_DATABASE
@@ -53,13 +53,15 @@ spec:
               value: "postgresadmin"
             - name: DB_PASSWORD
               value: "admin123"
-          volumeMounts:
-            - mountPath: /var/lib/pizzly/data
-              name: pizzlystorage
-      volumes:
-        - name: pizzlystorage
-          persistentVolumeClaim:
-            claimName: products-pizzly-pv-claim
+            - name: PORT
+              value: "80"
+      #     volumeMounts:
+      #       - mountPath: /var/lib/pizzly/data
+      #         name: pizzlystorage
+      # volumes:
+      #   - name: pizzlystorage
+      #     persistentVolumeClaim:
+      #       claimName: products-pizzly-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -68,7 +70,7 @@ metadata:
   name: products-pizzly-widget
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
   selector:
     app: products-pizzly-widget
