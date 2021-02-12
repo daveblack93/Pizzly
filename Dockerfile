@@ -44,5 +44,3 @@ COPY --chown=node:node --from=0 /app/node_modules ./node_modules
 
 # Run the startup script
 CMD ./startup.sh
-
-EXPOSE 8080
