@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: products-perf-pizzly
-  name: products-perf-pizzly-widget
+  name: products-perf-pizzly-two-widget
   labels:
-    app: products-perf-pizzly-widget
+    app: products-perf-pizzly-two-widget
     product: products-perf-pizzly
-    app.kubernetes.io/name: "products-perf-pizzly-widget"
+    app.kubernetes.io/name: "products-perf-pizzly-two-widget"
     app.kubernetes.io/version: "latest"
     app.kubernetes.io/managed-by: "davide"
-    app.kubernetes.io/component: "products-perf-pizzly-widget"
+    app.kubernetes.io/component: "products-perf-pizzly-two-widget"
     app.kubernetes.io/part-of: "products-perf-pizzly"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: products-perf-pizzly-widget
+      app: products-perf-pizzly-two-widget
   template:
     metadata:
       labels:
-        app: products-perf-pizzly-widget
+        app: products-perf-pizzly-two-widget
     spec:
       containers:
-        - name: products-perf-pizzly-widget
+        - name: products-perf-pizzly-two-widget
           image: davidep931/pizzly-proxy:latest
           ports:
             - containerPort: 8080
@@ -42,7 +42,7 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.products-perf.deltatre.digital/auth/callback"
+              value: "https://pizzly-two.products-perf.deltatre.digital/auth/callback"
             - name: DB_HOST
               value: "10.0.221.130"
             - name: DB_PORT
@@ -67,10 +67,10 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: products-perf-pizzly
-  name: products-perf-pizzly-widget
+  name: products-perf-pizzly-two-widget
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: products-perf-pizzly-widget
+    app: products-perf-pizzly-two-widget

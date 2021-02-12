@@ -1,29 +1,34 @@
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  namespace: products-pizzly
-  name: products-pizzly-pv-volume
-  labels:
-    type: local
-    app: products
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: "/mnt/data"
----
+--- # ---
+# kind: PersistentVolume
+# apiVersion: v1
+# metadata:
+#   namespace: products-perf-pizzly
+#   name: products-perf-pizzly-pv-volume
+#   labels:
+#     type: local
+#     app: products
+# spec:
+#   storageClassName: azurefile
+#   capacity:
+#     storage: 1Gi
+#   azureFile:
+#     secretName: azure-storage-account-f961c06371dea49e78118d5-secret
+#     shareName: kubernetes-dynamic-pvc-fa874087-6fe8-437d-acde-bde2404f3e38
+#     secretNamespace: testing
+#   accessModes:
+#     - ReadWriteMany
+#   claimRef:
+#     namespace: products-perf-pizzly
+#     name: products-perf-pizzly-pv-claim
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  namespace: products-pizzly
-  name: products-pizzly-pv-claim
+  namespace: products-perf-pizzly
+  name: products-perf-pizzly-pv-claim
   labels:
     app: products
 spec:
-  storageClassName: manual
+  storageClassName: azurefile
   accessModes:
     - ReadWriteMany
   resources:
