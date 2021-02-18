@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: products-pizzly
-  name: products-pizzly-widget
+  namespace: products-perf-pizzly
+  name: products-perf-pizzly-widget
   labels:
-    app: products-pizzly-widget
-    product: products-pizzly
-    app.kubernetes.io/name: "products-pizzly-widget"
+    app: products-perf-pizzly-widget
+    product: products-perf-pizzly
+    app.kubernetes.io/name: "products-perf-pizzly-widget"
     app.kubernetes.io/version: "latest"
     app.kubernetes.io/managed-by: "davide"
-    app.kubernetes.io/component: "products-pizzly-widget"
-    app.kubernetes.io/part-of: "products-pizzly"
+    app.kubernetes.io/component: "products-perf-pizzly-widget"
+    app.kubernetes.io/part-of: "products-perf-pizzly"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: products-pizzly-widget
+      app: products-perf-pizzly-widget
   template:
     metadata:
       labels:
-        app: products-pizzly-widget
+        app: products-perf-pizzly-widget
     spec:
       containers:
-        - name: products-pizzly-widget
+        - name: products-perf-pizzly-widget
           image: davidep931/pizzly-proxy:latest
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: NODE_ENV
               value: "production"
@@ -42,7 +42,7 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.products.deltatre.digital/auth/callback"
+              value: "https://pizzly.products-perf.deltatre.digital/auth/callback"
             - name: DB_HOST
               value: "10.0.221.130"
             - name: DB_PORT
@@ -54,23 +54,71 @@ spec:
             - name: DB_PASSWORD
               value: "admin123"
             - name: PORT
-              value: "80"
-      #     volumeMounts:
-      #       - mountPath: /var/lib/pizzly/data
-      #         name: pizzlystorage
-      # volumes:
-      #   - name: pizzlystorage
-      #     persistentVolumeClaim:
-      #       claimName: products-pizzly-pv-claim
+              value: "8080"
+          volumeMounts:
+            - mountPath: "/home/node/app/integrations"
+              name: pizzlystorage
+        - name: products-perf-pizzly-widget-sidecar
+          image: redis:rc-alpine3.13
+          ports:
+            - containerPort: 8081
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DASHBOARD_USERNAME
+              value: "admin"
+            - name: DASHBOARD_PASSWORD
+              value: "admin"
+            - name: SECRET_KEY
+              value: "devSecretKey"
+            - name: PUBLISHABLE_KEY
+              value: "devPubKey"
+            - name: PROXY_USES_SECRET_KEY_ONLY
+              value: "FALSE"
+            - name: COOKIE_SECRET
+              value: "devCookieSecret"
+            - name: AUTH_CALLBACK_URL
+              value: "https://pizzly.products-perf.deltatre.digital/auth/callback"
+            - name: DB_HOST
+              value: "10.0.221.130"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: "postgresdb"
+            - name: DB_USER
+              value: "postgresadmin"
+            - name: DB_PASSWORD
+              value: "admin123"
+            - name: PORT
+              value: "8080"
+          volumeMounts:
+            - mountPath: "/home/node/app/integrations"
+              name: pizzlystorage
+      volumes:
+        - name: pizzlystorage
+          persistentVolumeClaim:
+            claimName: products-perf-pizzly-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: products-pizzly
-  name: products-pizzly-widget
+  namespace: products-perf-pizzly
+  name: products-perf-pizzly-widget
 spec:
   ports:
-    - port: 80
-      targetPort: 80
+    - port: 8080
+      targetPort: 8080
   selector:
-    app: products-pizzly-widget
+    app: products-perf-pizzly-widget
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: products-perf-pizzly
+  name: products-perf-pizzly-widget-sidecar
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: products-perf-pizzly-widget-sidecar

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: products-pizzly
+  name: products-perf-pizzly
   labels:
-    product: products-pizzly
-    app.kubernetes.io/name: "products-pizzly"
+    product: products-perf-pizzly
+    app.kubernetes.io/name: "products-perf-pizzly"
     app.kubernetes.io/component: "namespace"
-    app.kubernetes.io/part-of: "products-pizzly"
+    app.kubernetes.io/part-of: "products-perf-pizzly"
