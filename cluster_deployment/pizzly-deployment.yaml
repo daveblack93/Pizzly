@@ -58,6 +58,13 @@ spec:
           volumeMounts:
             - mountPath: "/home/node/app/integrations"
               name: pizzlystorage
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "50m"
+            limits:
+              cpu: "75m"
+              memory: "200Mi"
         - name: products-perf-pizzly-widget-sidecar
           image: redis:rc-alpine3.13
           ports:
@@ -94,6 +101,13 @@ spec:
           volumeMounts:
             - mountPath: "/home/node/app/integrations"
               name: pizzlystorage
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "50m"
+            limits:
+              cpu: "75m"
+              memory: "200Mi"
       volumes:
         - name: pizzlystorage
           persistentVolumeClaim:
