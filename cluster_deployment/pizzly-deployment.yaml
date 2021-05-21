@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: products-perf-pizzly
-  name: products-perf-pizzly-widget
+  namespace: sandbox-pizzly
+  name: sandbox-pizzly-widget
   labels:
-    app: products-perf-pizzly-widget
-    product: products-perf-pizzly
-    app.kubernetes.io/name: "products-perf-pizzly-widget"
+    app: sandbox-pizzly-widget
+    product: sandbox-pizzly
+    app.kubernetes.io/name: "sandbox-pizzly-widget"
     app.kubernetes.io/version: "latest"
     app.kubernetes.io/managed-by: "davide"
-    app.kubernetes.io/component: "products-perf-pizzly-widget"
-    app.kubernetes.io/part-of: "products-perf-pizzly"
+    app.kubernetes.io/component: "sandbox-pizzly-widget"
+    app.kubernetes.io/part-of: "sandbox-pizzly"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: products-perf-pizzly-widget
+      app: sandbox-pizzly-widget
   template:
     metadata:
       labels:
-        app: products-perf-pizzly-widget
+        app: sandbox-pizzly-widget
     spec:
       containers:
-        - name: products-perf-pizzly-widget
+        - name: sandbox-pizzly-widget
           image: davidep931/pizzly-proxy:latest
           ports:
             - containerPort: 8080
@@ -42,9 +42,9 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.products-perf.deltatre.digital/auth/callback"
+              value: "https://pizzly.sandbox.deltatre.digital/auth/callback"
             - name: DB_HOST
-              value: "10.0.221.130"
+              value: "10.0.196.195"
             - name: DB_PORT
               value: "5432"
             - name: DB_DATABASE
@@ -65,7 +65,7 @@ spec:
             limits:
               cpu: "75m"
               memory: "200Mi"
-        - name: products-perf-pizzly-widget-sidecar
+        - name: sandbox-pizzly-widget-sidecar
           image: redis:rc-alpine3.13
           ports:
             - containerPort: 8081
@@ -85,7 +85,7 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.products-perf.deltatre.digital/auth/callback"
+              value: "https://pizzly.sandbox.deltatre.digital/auth/callback"
             - name: DB_HOST
               value: "10.0.221.130"
             - name: DB_PORT
@@ -98,9 +98,9 @@ spec:
               value: "admin123"
             - name: PORT
               value: "8080"
-          volumeMounts:
-            - mountPath: "/home/node/app/integrations"
-              name: pizzlystorage
+          # volumeMounts:
+          #   - mountPath: "/home/node/app/integrations"
+          #     name: pizzlystorage
           resources:
             requests:
               memory: "100Mi"
@@ -111,28 +111,28 @@ spec:
       volumes:
         - name: pizzlystorage
           persistentVolumeClaim:
-            claimName: products-perf-pizzly-pv-claim
+            claimName: sandbox-pizzly-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: products-perf-pizzly
-  name: products-perf-pizzly-widget
+  namespace: sandbox-pizzly
+  name: sandbox-pizzly-widget
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: products-perf-pizzly-widget
+    app: sandbox-pizzly-widget
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: products-perf-pizzly
-  name: products-perf-pizzly-widget-sidecar
+  namespace: sandbox-pizzly
+  name: sandbox-pizzly-widget-sidecar
 spec:
   ports:
     - port: 8081
       targetPort: 8081
   selector:
-    app: products-perf-pizzly-widget-sidecar
+    app: sandbox-pizzly-widget-sidecar

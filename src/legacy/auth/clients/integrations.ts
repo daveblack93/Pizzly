@@ -80,6 +80,8 @@ export const getConfig = async ({ buid }: { buid: string }) => {
   try {
     item = require(`../../../../integrations/${buid}.json`)
   } catch (err) {
+    console.log('buid: ', buid)
+    console.log('error: ', err)
     if (err.code === 'MODULE_NOT_FOUND') {
       return false
     }

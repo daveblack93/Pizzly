@@ -1,30 +1,30 @@
---- # ---
-# kind: PersistentVolume
-# apiVersion: v1
-# metadata:
-#   namespace: products-perf-pizzly
-#   name: products-perf-pizzly-pv-volume
-#   labels:
-#     type: local
-#     app: products
-# spec:
-#   storageClassName: azurefile
-#   capacity:
-#     storage: 1Gi
-#   azureFile:
-#     secretName: azure-storage-account-f961c06371dea49e78118d5-secret
-#     shareName: kubernetes-dynamic-pvc-fa874087-6fe8-437d-acde-bde2404f3e38
-#     secretNamespace: testing
-#   accessModes:
-#     - ReadWriteMany
-#   claimRef:
-#     namespace: products-perf-pizzly
-#     name: products-perf-pizzly-pv-claim
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: sandbox-pizzly-pv-volume
+  labels:
+    type: local
+    app: products
+spec:
+  storageClassName: azurefile
+  capacity:
+    storage: 1Gi
+  azureFile:
+    secretName: azure-secret
+    shareName: sandbox-pizzly-pv
+    readOnly: false
+    secretNamespace: sandbox-pizzly
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: sandbox-pizzly
+    name: sandbox-pizzly-pv-claim
+---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  namespace: products-perf-pizzly
-  name: products-perf-pizzly-pv-claim
+  namespace: sandbox-pizzly
+  name: sandbox-pizzly-pv-claim
   labels:
     app: products
 spec:
@@ -34,3 +34,35 @@ spec:
   resources:
     requests:
       storage: 1Gi
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: azurefilestorage
+provisioner: kubernetes.io/azure-file
+parameters:
+  storageAccount: persistentsapizzly
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azure-secret
+  namespace: sandbox-pizzly
+type: Opaque
+data:
+  azurestorageaccountname: cGVyc2lzdGVudHNhcGl6emx5Cg==
+  azurestorageaccountkey: bVNKMGh0WTNYUXNSYzMwcU81N1pVTENSWm9rckZvRG1RWGtUaGc1ODhBaHVsNG1nUDBNNFhUUzJxNFlZR2Zua0l0dDBjdTNLTnFXMk9KazFMWU1aVnc9PQo=
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: system:azure-cloud-provider-binding
+# roleRef:
+#   kind: ClusterRole
+#   apiGroup: rbac.authorization.k8s.io
+#   name: system:azure-cloud-provider
+# subjects:
+# - kind: ServiceAccount
+#   name: persistent-volume-binder
+#   namespace: kube-system
