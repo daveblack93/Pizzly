@@ -16,8 +16,6 @@ COPY views ./views/
 
 RUN yarn install
 
-RUN yarn build
-
 # Actual image to run from.
 FROM node:14-slim
 
@@ -42,7 +40,6 @@ COPY --chown=node:node --from=0 /app/package.json ./package.json
 COPY --chown=node:node --from=0 /app/dist/ .
 COPY --chown=node:node --from=0 /app/views ./views
 COPY --chown=node:node --from=0 /app/node_modules ./node_modules
-# COPY --chown=node:node --from=0 /app/integrations ./integrations
 
 # Run the startup script
 CMD ./startup.sh
