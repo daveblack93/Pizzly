@@ -49,7 +49,7 @@ spec:
             - name: COOKIE_SECRET
               value: "devCookieSecret"
             - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.sandbox.deltatre.digital/auth/callback"
+              value: "https://pizzly.integrations-lab-forge.deltatre.digital/auth/callback"
             - name: DB_HOST
               value: "10.0.196.195"
             - name: DB_PORT
