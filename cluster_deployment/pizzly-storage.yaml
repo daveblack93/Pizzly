@@ -51,5 +51,5 @@ metadata:
   namespace: sandbox-pizzly
 type: Opaque
 data:
-  azurestorageaccountname: xxxxxxxx
-  azurestorageaccountkey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  azurestorageaccountname: cGVyc2lzdGVudHNhcGl6emx5Cg==
+  azurestorageaccountkey: bVNKMGh0WTNYUXNSYzMwcU81N1pVTENSWm9rckZvRG1RWGtUaGc1ODhBaHVsNG1nUDBNNFhUUzJxNFlZR2Zua0l0dDBjdTNLTnFXMk9KazFMWU1aVnc9PQo=
