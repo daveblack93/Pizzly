@@ -21,6 +21,13 @@ spec:
       labels:
         app: sandbox-pizzly-widget
     spec:
+      initContainers:
+        - name: init-sandbox-pizzly-widget
+          image: davidep931/pizzly-proxy:latest
+          command: ["/bin/sh", "-c", "cp -R /home/node/app/integrations/* /tmp/"]
+          volumeMounts:
+          - name: pizzlystorage
+            mountPath: /tmp
       containers:
         - name: sandbox-pizzly-widget
           image: davidep931/pizzly-proxy:latest

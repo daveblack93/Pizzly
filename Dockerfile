@@ -15,6 +15,7 @@ COPY tests ./tests/
 COPY views ./views/
 
 RUN yarn install
+RUN yarn build
 
 # Actual image to run from.
 FROM node:14-slim
