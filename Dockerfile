@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Make a directory for the node user. Not running Pizzly as root.
-RUN mkdir /home/node/app && chown -R root:root /home/node/app
-WORKDIR /home/node/app
+RUN mkdir /home/app && chown -R root:root /home/app
+WORKDIR /home/app
 
 USER root
 
