@@ -16,7 +16,6 @@ COPY views ./views/
 
 RUN yarn install
 
-
 # Actual image to run from.
 FROM node:14-slim
 
@@ -32,6 +31,8 @@ RUN mkdir /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 
 USER node
+
+RUN yarn build
 
 # Startup script
 COPY --chown=node:node ./startup.sh ./startup.sh
