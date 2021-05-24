@@ -28,19 +28,20 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Make a directory for the node user. Not running Pizzly as root.
-RUN mkdir /home/root/app && chown -R root:root /home/root/app
-WORKDIR /home/root/app
+RUN mkdir /home/node/app && chown -R node:node /home/node/app
+WORKDIR /home/node/app
 
-USER root
+USER node
 
 # Startup script
-COPY --chown=root:root ./startup.sh ./startup.sh
+COPY --chown=node:node ./startup.sh ./startup.sh
 RUN chmod +x ./startup.sh
 # COPY from first container
-COPY --chown=root:root --from=0 /app/package.json ./package.json
-COPY --chown=root:root --from=0 /app/dist/ .
-COPY --chown=root:root --from=0 /app/views ./views
-COPY --chown=root:root --from=0 /app/node_modules ./node_modules
+COPY --chown=node:node --from=0 /app/package.json ./package.json
+COPY --chown=node:node --from=0 /app/dist/ .
+COPY --chown=node:node --from=0 /app/views ./views
+COPY --chown=node:node --from=0 /app/node_modules ./node_modules
+COPY --chown=node:node --from=0 /app/integrations ./integrations
 
 # Run the startup script
 CMD ./startup.sh
