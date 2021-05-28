@@ -1,25 +1,3 @@
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: sandbox-pizzly-pv-volume
-  labels:
-    type: local
-    app: products
-spec:
-  storageClassName: azurefile
-  capacity:
-    storage: 1Gi
-  azureFile:
-    secretName: azure-secret
-    shareName: sandbox-pizzly-pv
-    readOnly: false
-    secretNamespace: sandbox-pizzly
-  accessModes:
-    - ReadWriteMany
-  claimRef:
-    namespace: sandbox-pizzly
-    name: sandbox-pizzly-pv-claim
----
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -34,22 +12,3 @@ spec:
   resources:
     requests:
       storage: 1Gi
----
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: azurefilestorage
-provisioner: kubernetes.io/azure-file
-parameters:
-  storageAccount: persistentsapizzly
-reclaimPolicy: Retain
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: azure-secret
-  namespace: sandbox-pizzly
-type: Opaque
-data:
-  azurestorageaccountname: xxxxxxxxx
-  azurestorageaccountkey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

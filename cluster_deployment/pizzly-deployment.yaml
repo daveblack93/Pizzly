@@ -73,49 +73,6 @@ spec:
             limits:
               cpu: "75m"
               memory: "200Mi"
-        - name: sandbox-pizzly-widget-sidecar
-          image: redis:rc-alpine3.13
-          ports:
-            - containerPort: 8081
-          env:
-            - name: NODE_ENV
-              value: "production"
-            - name: DASHBOARD_USERNAME
-              value: "admin"
-            - name: DASHBOARD_PASSWORD
-              value: "admin"
-            - name: SECRET_KEY
-              value: "devSecretKey"
-            - name: PUBLISHABLE_KEY
-              value: "devPubKey"
-            - name: PROXY_USES_SECRET_KEY_ONLY
-              value: "FALSE"
-            - name: COOKIE_SECRET
-              value: "devCookieSecret"
-            - name: AUTH_CALLBACK_URL
-              value: "https://pizzly.sandbox.deltatre.digital/auth/callback"
-            - name: DB_HOST
-              value: "10.0.221.130"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_DATABASE
-              value: "postgresdb"
-            - name: DB_USER
-              value: "postgresadmin"
-            - name: DB_PASSWORD
-              value: "admin123"
-            - name: PORT
-              value: "8080"
-          # volumeMounts:
-          #   - mountPath: "/home/node/app/integrations"
-          #     name: pizzlystorage
-          resources:
-            requests:
-              memory: "100Mi"
-              cpu: "50m"
-            limits:
-              cpu: "75m"
-              memory: "200Mi"
       volumes:
         - name: pizzlystorage
           persistentVolumeClaim:
@@ -127,20 +84,9 @@ metadata:
   namespace: sandbox-pizzly
   name: sandbox-pizzly-widget
 spec:
+  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
   selector:
     app: sandbox-pizzly-widget
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: sandbox-pizzly
-  name: sandbox-pizzly-widget-sidecar
-spec:
-  ports:
-    - port: 8081
-      targetPort: 8081
-  selector:
-    app: sandbox-pizzly-widget-sidecar
